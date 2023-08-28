@@ -1,0 +1,5 @@
+celery
+djangorestframework
+python-dotenv
+redis
+

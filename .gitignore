@@ -1,0 +1,6 @@
+app/migrations
+env_template
+db.sqlite3
+app/__pycache__/
+app_settings/__pycache__/
+.idea/
