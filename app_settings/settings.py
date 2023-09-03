@@ -28,9 +28,10 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*',]
 
-
+HOST = os.getenv('HOST', 'localhost')
+NAME_RESULT_FILE = os.getenv('NAME_RESULT_FILE', 'res.docx')
 # Application definition
 
 INSTALLED_APPS = [

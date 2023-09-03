@@ -23,9 +23,14 @@ import json
 
 class DeclaritionModelFile(models.Model):
     path_folder = models.CharField(max_length=255, blank=True, null=True)
-
+    # url_file = models.CharField(max_length=255, blank=True, null=True)
     def render_document(self):
         pass
+    @property
+    def url_file(self):
+        return f'/static/{self.pk}/{settings.NAME_RESULT_FILE}'
+    def __str__(self):
+        return f'Declarition - {self.pk}'
 
 
 class DocumentsModel(models.Model):
@@ -128,7 +133,7 @@ def set_document_type(sender, instance, created, **kwargs):
             path_folder = os.path.join(settings.BASE_DIR, 'static', str(instance.declaration.pk))
 
             os.makedirs(path_folder, exist_ok=True)
-            file_res_name = os.path.join(path_folder, 'res.docx')
+            file_res_name = os.path.join(path_folder, settings.NAME_RESULT_FILE)
             template_path = os.path.join(settings.BASE_DIR, 'template.docx')
             doc = DocxTemplate(template_path)
             doc.render(context=dict_data)
