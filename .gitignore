@@ -4,3 +4,4 @@ db.sqlite3
 app/__pycache__/
 app_settings/__pycache__/
 .idea/
+app/classes_parser/__pycache__/

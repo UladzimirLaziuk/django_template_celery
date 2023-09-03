@@ -3,3 +3,9 @@ djangorestframework
 python-dotenv
 redis
 
+pdf2image
+opencv-python
+langchain
+docxtpl
+pytesseract
+openai
