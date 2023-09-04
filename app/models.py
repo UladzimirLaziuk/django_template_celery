@@ -105,6 +105,8 @@ def set_document_type(sender, instance, created, **kwargs):
             data_ocr_list, list_data = obj_parser.run()
             for text_ocr, dt in zip(data_ocr_list, list_data):
                 TextResultModel.objects.create(text_result=dt, docs_model=instance, text_ocr=text_ocr)
+        else:
+            raise ValueError('type file no pdf')
 
         if instance.declaration.documents.count() == 6:
             # instance.declaration.render_document()
@@ -114,7 +116,7 @@ def set_document_type(sender, instance, created, **kwargs):
                 question = obj.get_text()
                 for key in list_keys:
                     val = dict_template_promts.get(key)
-                    if key in  ('act_pto', 'code_tnvd_eac', 'sert'):
+                    if key in  ('act_pto', 'code_tnvd_eac', 'sert', 'protocol_efi'):
                         promt_doc = val
                     else:
                         promt_doc = all_template.format(val)
