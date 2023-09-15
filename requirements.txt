@@ -9,3 +9,4 @@ langchain
 docxtpl
 pytesseract
 openai
+docxtpl

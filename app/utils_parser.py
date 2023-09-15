@@ -14,6 +14,7 @@ from app.service_utils import convert_pdf_to_png_file
 class ConverterPdfToPng:
     def __init__(self, dirs_name=None):
         self.dirs_name = dirs_name
+
     def load(self, path_file, index_tuple='__all__', dpi=100):
         dir_path = os.path.dirname(path_file)
         path_dir_png = os.path.join(dir_path, self.dirs_name)
@@ -44,7 +45,7 @@ class ParseDocument(ABC):
     dict_parse_text = {}
     scale_percent = 100
 
-    def __init__(self, path_file, converter, index_tuple=(1,6), llm=None):
+    def __init__(self, path_file, converter, index_tuple=(1, 6), llm=None):
         self.converter = converter
         self.path_file = path_file
         self.index_tuple = index_tuple
@@ -59,7 +60,6 @@ class ParseDocument(ABC):
         img_rgb = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
         # scale_percent = 300  # percent of original size
         if self.scale_percent > 100:
-
             width = int(img_rgb.shape[1] * self.scale_percent / 100)
             height = int(img_rgb.shape[0] * self.scale_percent / 100)
             dim = (width, height)
@@ -82,7 +82,6 @@ class ParseDocument(ABC):
     @abstractmethod
     def get_col_token(self, index, **kwargs):
         raise NotImplementedError()
-
 
     def get_chain_run(self, text, **kwargs):
         chat_prompt = self.get_chat_promts(**kwargs)
@@ -151,7 +150,6 @@ class ParseDocument(ABC):
 
         return dict_for_write
 
-
     def get_render_template_doc(self) -> None:
         doc = DocxTemplate(self.path_template)
         doc.render(context=self.dict_for_write)
@@ -159,7 +157,6 @@ class ParseDocument(ABC):
 
     def update_step_data(self, dict_data):
         self.dict_parse_text.update(dict_data)
-
 
     def run(self):
         self.convert_pdf_and_save()
@@ -173,4 +170,4 @@ class ParseDocument(ABC):
             list_data.append(text_ai)
             data_ocr_list.append(text)
 
-        return data_ocr_list, list_data#{self._name :list_data}
+        return data_ocr_list, list_data  # {self._name :list_data}

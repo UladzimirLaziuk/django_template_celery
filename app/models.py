@@ -17,18 +17,23 @@ from app.service_utils import get_qa
 from app.utils_parser import ConverterPdfToPng
 import shutil
 import json
+
+
 # from dotenv import load_dotenv
 #
 # load_dotenv(dotenv_path='../.env_dev')
 
 class DeclaritionModelFile(models.Model):
     path_folder = models.CharField(max_length=255, blank=True, null=True)
+
     # url_file = models.CharField(max_length=255, blank=True, null=True)
     def render_document(self):
         pass
+
     @property
     def url_file(self):
         return f'/static/{self.pk}/{settings.NAME_RESULT_FILE}'
+
     def __str__(self):
         return f'Declarition - {self.pk}'
 
@@ -73,10 +78,8 @@ dict_map_parser_class = {
     'protocol_efi': (ProtocolsEfiParse, '__all__', ("protocol_efi", 'efi_title')),
     'sert': (SertDocumentParse, (0,), ('sert', 'code_tnvd_eac')),
     'passport': (
-    PassportParse, (1, 6), ('description_elevator', 'description_address_manufacturer', 'assigned_lifetime')),
+        PassportParse, (1, 6), ('description_elevator', 'description_address_manufacturer', 'assigned_lifetime')),
 }
-
-
 
 
 def test_dict(instance):
@@ -90,7 +93,7 @@ def test_dict(instance):
 
 @receiver(post_save, sender=DocumentsModel)
 def set_document_type(sender, instance, created, **kwargs):
-    if created:
+    if True:
         src = os.path.join(settings.BASE_DIR, instance.path_to_file.name)
         path_to_file = instance.document_type + '.' + os.path.basename(instance.path_to_file.name).split('.')[-1]
         dst = os.path.join(instance.declaration.path_folder, path_to_file)
@@ -98,7 +101,7 @@ def set_document_type(sender, instance, created, **kwargs):
 
         parser, index, list_keys = dict_map_parser_class.get(instance.document_type)
         print(f'New deal with pk: {instance.pk} was created.')
-        if os.path.basename(dst).split('.')[-1] in ['pdf']:
+        if os.path.basename(dst).split('.')[-1].lower() in ['pdf']:
             conv = ConverterPdfToPng(dirs_name=f'out_png_{instance.document_type}')
             # full_path = os.path.join(settings.BASE_DIR, instance.path_to_file.name)
             obj_parser = parser(path_file=dst, converter=conv, index_tuple=index)
@@ -116,7 +119,9 @@ def set_document_type(sender, instance, created, **kwargs):
                 question = obj.get_text()
                 for key in list_keys:
                     val = dict_template_promts.get(key)
-                    if key in  ('act_pto', 'code_tnvd_eac', 'sert', 'protocol_efi'):
+                    if key in (
+                    'act_pto', 'code_tnvd_eac', 'sert', 'protocol_efi', 'description_address_manufacturer', 'efi_title',
+                    'protocol_pfl', 'description_elevator'):
                         promt_doc = val
                     else:
                         promt_doc = all_template.format(val)
@@ -124,7 +129,7 @@ def set_document_type(sender, instance, created, **kwargs):
                     qa = get_qa(temp=promt_doc)
                     dt_ai = qa.run(question=question)
                     dt_ai = dt_ai.replace('<end>', '').replace('\n', ' ').replace('{', '').replace('}', '').replace(
-                        'Конец шаблона.', '')
+                        'Конец шаблона.', '').replace('<', '').replace('>', '')
                     dict_data.update({key: dt_ai})
             print(dict_data)
             file_path = "my_dict.json"
@@ -149,6 +154,3 @@ def create_document_declaration(sender, instance, created, **kwargs):
         os.makedirs(path_folder, exist_ok=True)
         instance.path_folder = path_folder
         instance.save()
-
-
-
